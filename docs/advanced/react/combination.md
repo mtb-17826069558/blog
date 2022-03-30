@@ -1,0 +1,150 @@
+# React组件化开发
+
+## 一、什么是组件化
+
+在处理一个复杂的问题时，我们逻辑思维能力是有限的，不太可能一次性搞定所有的内容，那我们就可以对问题进行拆解，拆解成一个个小的问题，最后将其放入整体中，这就是分治的思想。
+
+
+
+分而治之是软件工程的重要思想，是复杂系统开发和维护的基石，而前端目前的模块化和组件化都是基于分而治之的思想。
+
+
+
+如果我们将一个页面的所有的处理逻辑都放在一起，那处理起来就会非常繁杂，并且也不利于后续的管理以及扩展。我们可以将页面拆分成一个个小的功能模块，每个功能模块完成属于这部分独立的功能，这样之后整个页面的管理和维护变得很容易了。
+
+
+
+我们需要通过组件化的思想来思考整个应用程序：
+
+- 将一个完整的页面分成很多个组件；
+- 每个组件都用于实现页面的一个功能块；
+
+- 每一个组件又可以进行细分；
+- 组件本身又可以在多个地方进行复用；
+
+## 二、React组件化
+
+组件化是React是核心思想，React的组件相对于Vue更加灵活和多样，按照不同的方式可以分成很多类组件：
+
+- 根据组件的定义方式，可以分为：函数组件(Functional Component )和类组件(Class Component)； 
+- 根据组件内部是否有状态需要维护，可以分成：无状态组件(Stateless Component )和有状态组件(Stateful Component)； 
+
+- 根据组件的不同职责，可以分成：展示型组件(Presentational Component)和容器型组件(Container Component)；
+
+
+
+这些概念有很多重叠，但是它们最主要是关注数据逻辑和UI展示的分离： 
+
+- 函数组件、无状态组件、展示型组件主要关注UI的展示； 
+- 类组件、有状态组件、容器型组件主要关注数据逻辑；
+
+当然还有很多组件的其他概念：比如异步组件、高阶组件等
+
+### 1. 类组件
+
+类组件的定义有如下要求： 
+
+- 组件的名称是大写字符开头（无论类组件还是函数组件） 
+- 类组件需要继承自 React.Component
+
+- 类组件必须实现render函数
+
+
+
+在ES6之前，可以通过create-react-class 模块来定义类组件，但是目前官网建议我们使用ES6的class类定义。
+
+
+
+使用class定义一个组件：
+
+- constructor是可选的，我们通常在constructor中初始化一些数据；
+- this.state中维护的就是我们组件内部的数据；
+
+- render() 方法是 class 组件中唯一必须实现的方法；
+
+```javascript
+// index.js
+import React from 'react'
+import ReactDom from 'react-dom'
+
+import App from 'App.js'
+
+ReactDOM.render(<APP />, document.getElementByid('root'))
+// App.js
+import React, { Component } from 'react'
+
+export default class App extends Component {
+		render(){
+      return(
+        <div>hello world</div>  
+      ）
+    }
+} 
+```
+
+**类组件特点：** 
+
+\1. 状态 state 是在 constructor 中初始化的； 
+
+\2. 成员函数不会自动绑定 this，需要开发者手动绑定，否则 this 不能获取当前组件实例对象。React 中可以用以下三种方法手动绑定 this ： 
+
+- 可以在构造函数中完成绑定； 
+- 可以在调用时使用 method.bind(this) 来完成绑定； 
+
+- 可以使用箭头函数来绑定。 
+
+
+
+通过 state 的变化，组件的 UI 也会随之重新渲染，因此我们不能把所有变量都放到 state 中，不然会造成一定的性能损耗。**以下情况都不应该作为一个状态放到 state 中：** 
+
+- 如果是通过 props 获取； 
+- 如果该变量不在 render 中使用； 
+
+- 如果整个过程中都不会发生变化； 
+- 如果该变量可以通过 state 和 props 两者计算得出。 
+
+### 2. 函数组件
+
+函数组件是使用function来进行定义的函数，只是这个函数会返回和类组件中render函数返回一样的内容。
+
+
+
+函数组件有自己的特点： 
+
+- 没有生命周期，也会被更新并挂载，但是没有生命周期函数
+- 没有this(组件实例）
+
+- 没有内部状态（state）
+
+
+
+函数式创建的组件代码简洁，专注于 render，且组件不需要被实例化，整体渲染性能得到了提升，且视图和数据解耦分离，输出只取决于输入。但是，它无法拥有自己的 state，只能通过 props 获取属性内容并实现组件的更新，无生命周期。 
+
+
+
+下面来定义一个函数组件：
+
+```javascript
+// App.js
+import React from 'react'
+
+export default function App(){
+		render(){
+      return(
+        <div>hello world</div>  
+      ）
+    }
+} 
+```
+
+说完这两种组件，我们来看一下render函数的返回值。当 render 被调用时，它会检查 `this.props` 和 `this.state` 的变化并返回以下类型之一：
+
+**（1）** **React 元素****：** 通常通过 JSX 创建。 例如：`<div />` 会被 React 渲染为 DOM 节点，`<MyComponent />` 会被 React 渲染为自定义组件。` <div /> `和 `<MyComponent />` 都是 React 元素。 
+
+**（2）数组或 fragments**：使得 render 方法可以返回多个元素。 
+
+**（3）Portals**：可以渲染子节点到不同的 DOM 子树中。
+
+**（4）字符串或数值类型**：它们在 DOM 中会被渲染为文本节点 
+
+**（5）布尔类型或 null**：什么都不渲染。
