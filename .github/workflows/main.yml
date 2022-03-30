@@ -1,53 +1,47 @@
-name: 打包vitepress博客
-
+name: Build app and deploy to aliyun
 on:
+  #监听push操作
   push:
-    # push 代码的时候 哪个分支会受到影响 这里是 master 主分支
     branches:
+      # master分支，你也可以改成其他分支
       - master
-
-# 推送之后执行一系列的任务
 jobs:
   build:
-    # 运行 ubuntu虚拟机系统
+    # runs-on 指定job任务运行所需要的虚拟机环境(必填字段)
     runs-on: ubuntu-latest
     steps:
-      # 获取代码
-      - name: 迁出代码
-        # 使用action库 action/checkout获取大妈
+      # 获取源码
+      - name: Checkout
+        # 使用action库  actions/checkout获取源码
         uses: actions/checkout@master
-      # 安装Node10
-
-      - name: 安装node.js
+      # 安装Node13
+      - name: use yarn.js 1.22.10
         # 使用action库  actions/setup-node安装node
         uses: actions/setup-node@v1
         with:
-          node-version: 14.18.0
-
-      - name: 安装yarn
-        run: npm install -g yarn
-
+          yarn-version: 1.22.10
+      # 忽略版本
+      - name: yarn set config
+        run: yarn config set ignore-engines true
       # 安装依赖
-      - name: 安装依赖
-        run: yarn
-
-      # 打包
-      - name: 打包
-        run: yarn docs:build
-
-      # 上传到阿里云
-      - name: 发布到阿里云
+      - name: yarn install
+        run: yarn install
+        # 打包
+      - name: yarn build
+        run: yarn run build
+      # 部署到阿里云
+      - name: Deploy to Aliyun
         uses: easingthemes/ssh-deploy@v2.1.1
         env:
-          # 私钥 PRIVATE_KEY 要和 仓库的私钥名一致 也就是私钥名也要叫 PRIVATE_KEY
+          # 私钥
           SSH_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-          # SCP参数
-          ARGS: '-avzr --delete'
-          # 源目录 -- 打包后的文件目录，也就是这个文件会被传到服务器上
-          SOURCE: 'docs/.vitepress/dist'
-          # 服务器ip
-          REMOTE_HOST: '121.40.166.6'
+          # scp参数
+          ARGS: "-avzr --delete"
+          # 源目录，编译后生成的文件目录
+          SOURCE: "./public"
+          # 服务器ip：换成你的服务器IP
+          REMOTE_HOST: "121.40.166.6"
           # 用户
-          REMOTE_USER: 'root'
-          # 目标地址 -- 上传到服务器的地址
-          TARGET: '/www/blog'
+          REMOTE_USER: "root"
+          # 目标地址 你在服务器上部署代码的地方
+          TARGET: "/www/blog"
