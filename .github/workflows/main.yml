@@ -1,4 +1,4 @@
-name: 打包vitepress博客
+name: 打包press博客
 
 on:
   push:
