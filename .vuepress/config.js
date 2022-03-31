@@ -1081,7 +1081,7 @@ module.exports = {
       ],
       "/docs/everyDay/": [
         {
-                title: "使用Github Action发布项目到阿里云",
+                title: "使用Github Action发布项目到阿里云1",
                 collapsable: true,
                 path: "gitAction"
         }
