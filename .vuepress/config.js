@@ -1078,6 +1078,14 @@ module.exports = {
       "/docs/donate/": [
         "",
         
+      ],
+      "/docs/everyDay/": [
+        {
+                title: "使用Github Action发布项目到阿里云",
+                collapsable: true,
+                path: "gitAction"
+        }
+        
       ]
     },
   
